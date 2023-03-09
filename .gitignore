@@ -1,0 +1,7 @@
+# Ignore everything
+/*
+
+# Except those
+!.gitignore
+!*.md
+!prog*/
