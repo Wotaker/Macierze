@@ -6,7 +6,7 @@ from numpy import ndarray as Matrix
 import numpy as np
 
 
-def test_multiplication(multiplication_algorithm: Callable, A: Matrix | None = None, B: Matrix | None = None):
+def test_multiplication(multiplication_algorithm: Callable, A: Matrix | None = None, B: Matrix | None = None, **kwargs: dict):
 
     print(f"=== Testing {multiplication_algorithm.__name__} algorithm ===")
 
@@ -16,7 +16,7 @@ def test_multiplication(multiplication_algorithm: Callable, A: Matrix | None = N
     assert A.shape == B.shape and A.shape[0] == A.shape[1], "Matrices are not square!"
     assert np.isclose(np.log2(A.shape[0]) % 1, 0), "Matrices size is not a power of 2!"
     
-    AB = multiplication_algorithm(A, B)
+    AB = multiplication_algorithm(A, B, **kwargs)
     AB_numpy = A @ B
 
     print(f"\nMatrix A:\n{A}")
@@ -26,11 +26,12 @@ def test_multiplication(multiplication_algorithm: Callable, A: Matrix | None = N
 
     assert np.array_equal(AB, AB_numpy), "Results are inconsistent! Check your algorithm!"
 
-    print("\nTest Passed!\n")
+    print("\nTest Passed!")
 
 
 if __name__ == "__main__":
     test_multiplication(multiply_classic)
     test_multiplication(multiply_strassen)
+    test_multiplication(multiply_strassen_with_classic, size_classic=2)
 
     print("ALL TESTS PASSED!")
