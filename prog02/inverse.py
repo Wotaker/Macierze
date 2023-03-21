@@ -3,12 +3,14 @@ from numpy import ndarray as Matrix
 
 from classic_strasen import multiply_strassen_with_classic
 
+OPTIMAL_L = 6
+
 
 # short alias
 def matmul_chain(*Ms: Matrix) -> Matrix:
     result = Ms[0]
     for M in Ms[1:]:
-        result = multiply_strassen_with_classic(result, M)
+        result = multiply_strassen_with_classic(result, M, OPTIMAL_L)
     return result
 
 

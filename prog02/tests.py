@@ -1,9 +1,14 @@
 from inverse import inverse
+from utils import *
 
 from typing import Callable
 from numpy import ndarray as Matrix
 
 import numpy as np
+import os
+
+
+TEST_MATRICES = "test_compression.dat"
 
 
 def test_inverse(A: Matrix):
@@ -25,7 +30,22 @@ def test_inverse(A: Matrix):
     print("\nTest Passed!")
 
 
+def test_compression():
+
+    matrices = [generate_invertible_matrix(2 ** k, 'I') for k in range(1, 9)]
+    save(TEST_MATRICES, matrices)
+    matrices_retrieved = load(TEST_MATRICES)
+
+    for m, mr in zip(matrices, matrices_retrieved):
+        assert np.all(m - mr == 0), "Retrieved matrices differ from the saved ones!"
+
+    os.remove(TEST_MATRICES)
+
+    print("Compression Test Passed!")
+
+
 if __name__ == "__main__":
+
     A1 = np.array([[ 7,  1, -1,  9],
                    [-8,  1,  5, -8],
                    [-2, -9, -3, -8],
@@ -57,4 +77,6 @@ if __name__ == "__main__":
     test_inverse(A2)
     test_inverse(A3)
 
-    print("ALL TESTS PASSED!")
+    test_compression()
+
+    print("\nALL TESTS PASSED!")
