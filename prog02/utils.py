@@ -5,8 +5,13 @@ from numpy import ndarray as Matrix
 from timeit import default_timer as timer
 
 import numpy as np
+import matplotlib.pyplot as plt
 import pickle
 import lz4.frame
+
+
+# Funkcja anonimowa obliczająca liczbę operacji dla k
+inv_flo = lambda k: 17 * pow(2, k - 1) + sum([pow(2, k - i) * (46 * pow(7, i - 1) + 4 * pow(4, i - 1) - 36 * pow(2, i - 1) + 1) for i in range(2, k + 1)])
 
 
 def is_invertable(A: Matrix):
@@ -89,3 +94,48 @@ def generate_data(reps, max_k, seed, path, verbose: bool = False):
     save(path, matrices)
     
     return matrices
+
+
+def plot_results(sizes, times_mean, flos):
+    fig, (ax1, ax2) = plt.subplots(2)
+    fig.set_size_inches(8, 12)
+
+    # Log-plot
+    ax1_flo = ax1.twinx()
+    ax1.scatter(sizes, times_mean, color='tab:blue', label="t")
+    ax1_flo.scatter(sizes, flos, color='tab:orange', label="FLO", marker='x')
+    ax1.set_ylabel("Czas obliczeń t [s]")
+    ax1_flo.set_ylabel("Liczba operacji zmiennoprzecinkowych FLO")
+    ax1.set_xlabel("Rozmiar macierzy")
+    ax1.set_xscale('log')
+    ax1.set_yscale('log')
+    ax1_flo.set_yscale('log')
+
+    for i, size in enumerate(list(sizes)):
+        ax1.annotate(f"{size}x{size}", (sizes[i], times_mean[i]), fontsize=8, ha='center')
+        ax2.annotate(f"{size}x{size}", (sizes[i], times_mean[i]), fontsize=8, ha='center')
+
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax1_flo.get_legend_handles_labels()
+    ax1_flo.legend(lines + lines2, labels + labels2, loc='upper left')
+
+    ax1.set_title("Złożoność rekurencyjnego odwracania macierzy")
+
+    # Normal-plot
+    ax2_flo = ax2.twinx()
+    ax2.scatter(sizes, times_mean, color='tab:blue', label="t")
+    ax2_flo.scatter(sizes, flos, color='tab:orange', label="FLO", marker='x')
+    ax2.set_ylabel("Czas obliczeń t [s]")
+    ax2_flo.set_ylabel("Liczba operacji zmiennoprzecinkowych FLO")
+    ax2.set_xlabel("Rozmiar macierzy")
+    ax2.set_xscale('log')
+
+    for i, size in enumerate(list(sizes)):
+        ax2.annotate(f"{size}x{size}", (sizes[i], times_mean[i]), fontsize=8, ha='center')
+        ax2.annotate(f"{size}x{size}", (sizes[i], times_mean[i]), fontsize=8, ha='center')
+
+    lines, labels = ax2.get_legend_handles_labels()
+    lines2, labels2 = ax2_flo.get_legend_handles_labels()
+    ax2_flo.legend(lines + lines2, labels + labels2, loc='upper left')
+
+    plt.show()
